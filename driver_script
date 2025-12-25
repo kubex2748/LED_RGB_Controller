@@ -1,0 +1,26 @@
+#define R_PIN 25                                                                    // Pins on driver, u can choose what ever whitch PWM pins
+#define G_PIN 4
+#define B_PIN 2
+
+const int PWM_FREQ = 5000;                                                          // Frequence, it could be smaller but bigger than 50 
+const int PWM_RESOLUTION = 8;                                                       // 8 bit resolution for RGB 0 - 255
+
+void setup() {
+  Serial.begin(115200);                                                             // serial bus stuf
+  ledcAttach(R_PIN, PWM_FREQ, PWM_RESOLUTION);                                      // PWM stuf
+  ledcAttach(G_PIN, PWM_FREQ, PWM_RESOLUTION);
+  ledcAttach(B_PIN, PWM_FREQ, PWM_RESOLUTION);
+}
+
+void loop() {
+  if(Serial.available()) {                                                          // if contoller get some data
+    String line = Serial.readStringUntil('\n');
+    int r = line.substring(0, line.indexOf(',')).toInt();                           // String to 8 bit int (it could be byte but nvm)
+    int g = line.substring(line.indexOf(',')+1, line.lastIndexOf(',')).toInt();
+    int b = line.substring(line.lastIndexOf(',')+1).toInt();
+
+    ledcWrite(R_PIN, r);                                                             // write PWM
+    ledcWrite(G_PIN, g);
+    ledcWrite(B_PIN, b);
+  }
+}
